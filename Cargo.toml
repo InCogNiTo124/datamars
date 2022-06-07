@@ -1,0 +1,18 @@
+# cargo-features = ["different-binary-name"]
+
+[package]
+name = "datamars"
+version = "0.1.0"
+edition = "2021"
+description = "parking package for a rust copy of https://www.gnu.org/software/datamash/"
+license = "Apache-2.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+
+[[bin]]
+name = "ms"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "3.1.18", features = ["derive"]}
