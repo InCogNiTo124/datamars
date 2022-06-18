@@ -21,7 +21,7 @@ impl Mean {
 fn main() {
     let parser = Command::new("ms")
         .author("Marijan Smetko, msmetko@msmetko.xyz")
-        .version("0.0.2")
+        .version("0.2.0")
         .arg(
             Arg::new("delimiter")
                 .short('d')
