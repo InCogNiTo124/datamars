@@ -1,20 +1,22 @@
 use clap::{Arg, Command};
 use std::io::BufRead;
 
-#[derive(Default)]
+trait Processor {
+    fn new() -> Self;
+    fn apply(&mut self, x: f64);
+}
 struct Mean {
     n: i64,
     result: f64,
 }
 
-impl Mean {
+impl Processor for Mean {
+    fn new() -> Mean {
+        Mean { n: 0, result: 0.0 }
+    }
     fn apply(&mut self, x: f64) {
         self.n += 1;
         self.result += (x - self.result) / (self.n as f64);
-    }
-
-    fn new() -> Mean {
-        Mean {n: 0, result: 0.0}
     }
 }
 
