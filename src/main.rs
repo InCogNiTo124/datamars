@@ -1,7 +1,7 @@
 use clap::{Arg, Command};
 use std::io::BufRead;
 
-trait Processor {
+trait Operator {
     fn new() -> Self;
     fn apply(&mut self, x: f64);
 }
@@ -10,7 +10,7 @@ struct Mean {
     result: f64,
 }
 
-impl Processor for Mean {
+impl Operator for Mean {
     fn new() -> Mean {
         Mean { n: 0, result: 0.0 }
     }
