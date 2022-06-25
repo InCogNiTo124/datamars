@@ -7,6 +7,8 @@ mod ops;
 
 use ops::mean::Mean;
 use ops::sum::Sum;
+use ops::geomean::GeoMean;
+use ops::harmean::HarMean;
 
 struct Processor {
     op: Box<dyn Operator>,
@@ -19,6 +21,8 @@ impl Processor {
             op: match op_type {
                 "mean" => Box::new(Mean::new()) as Box<dyn Operator>,
                 "sum" => Box::new(Sum::new()) as Box<dyn Operator>,
+                "geomean" => Box::new(GeoMean::new()) as Box<dyn Operator>,
+                "harmean" => Box::new(HarMean::new()) as Box<dyn Operator>,
                 _ => panic!("eror"),
             },
             index,
