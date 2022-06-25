@@ -6,16 +6,21 @@ mod operator;
 mod ops;
 
 use ops::mean::Mean;
+use ops::sum::Sum;
 
-struct Processor<T: Operator> {
-    op: T,
+struct Processor {
+    op: Box<dyn Operator>,
     index: usize,
 }
 
-impl<T: Operator> Processor<T> {
-    fn new(index: usize) -> Self {
+impl Processor {
+    fn new(op_type: &str, index: usize) -> Self {
         Processor {
-            op: T::new(),
+            op: match op_type {
+                "mean" => Box::new(Mean::new()) as Box<dyn Operator>,
+                "sum" => Box::new(Sum::new()) as Box<dyn Operator>,
+                _ => panic!("eror"),
+            },
             index,
         }
     }
@@ -47,9 +52,10 @@ fn main() {
         .expect("No commands provided")
         .collect();
     assert_eq!(vals.len(), 2);
-    assert_eq!(vals[0], "mean");
+    // assert_eq!(vals[0], "mean");
     let index = vals[1].parse::<usize>().unwrap() - 1;
-    let mut processor = Processor::<Mean>::new(index);
+    let mut processor = Processor::new(vals[0], index);
+
     let locked_stdin = std::io::stdin();
     for line in locked_stdin.lock().lines() {
         let _line = line.unwrap();
