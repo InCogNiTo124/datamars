@@ -5,10 +5,10 @@ use std::io::BufRead;
 mod operator;
 mod ops;
 
-use ops::mean::Mean;
-use ops::sum::Sum;
 use ops::geomean::GeoMean;
 use ops::harmean::HarMean;
+use ops::mean::Mean;
+use ops::sum::Sum;
 
 struct Processor {
     op: Box<dyn Operator>,

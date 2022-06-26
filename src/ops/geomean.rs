@@ -18,6 +18,6 @@ impl operator::Operator for GeoMean {
 
 impl GeoMean {
     pub fn new() -> GeoMean {
-        GeoMean{ mean: Mean::new()}
+        GeoMean { mean: Mean::new() }
     }
 }
