@@ -28,7 +28,7 @@ impl Processor {
             index,
         }
     }
-    pub(crate) fn process(&mut self, parts: Vec<&str>) {
+    pub(crate) fn process(&mut self, parts: &Vec<&str>) {
         self.op
             .apply(parts[self.index].parse().expect("no number provided"));
     }
@@ -36,6 +36,15 @@ impl Processor {
     fn result(&self) -> f64 {
         self.op.result()
     }
+}
+fn operator_definitions(operations: Vec<&str>) -> Vec<(&str, &str)> {
+    let mut op_definitions: Vec<(&str, &str)> = Vec::new();
+    let mut i = 0;
+    while i < operations.len() {
+        op_definitions.push((operations[i], operations[i + 1]));
+        i += 2;
+    }
+    op_definitions
 }
 
 fn main() {
@@ -51,20 +60,25 @@ fn main() {
         .arg(Arg::new("commands").multiple_values(true));
     let matches = parser.get_matches();
     let delimiter = matches.value_of("delimiter").unwrap();
-    let vals: Vec<&str> = matches
+    let operations: Vec<&str> = matches
         .values_of("commands")
         .expect("No commands provided")
         .collect();
-    assert_eq!(vals.len(), 2);
-    // assert_eq!(vals[0], "mean");
-    let index = vals[1].parse::<usize>().unwrap() - 1;
-    let mut processor = Processor::new(vals[0], index);
 
+    let op_definition = operator_definitions(operations);
+    let mut processors: Vec<Processor> = Vec::new();
+    for (op_type, arg) in op_definition {
+        let index = arg.parse::<usize>().unwrap() - 1;
+        processors.push(Processor::new(op_type, index));
+    }
+    // assert_eq!(vals[0], "mean");
     let locked_stdin = std::io::stdin();
     for line in locked_stdin.lock().lines() {
         let _line = line.unwrap();
         let parts: Vec<&str> = _line.split(delimiter).collect();
-        processor.process(parts);
+        for processor in processors.iter_mut() {
+            processor.process(&parts);
+        }
     }
-    println!("{}", processor.result());
+    println!("{}", processors.iter().map(|p| p.result().to_string()).collect::<Vec<_>>().join("\t"));
 }
