@@ -1,7 +1,7 @@
-pub use crate::operator::operator;
+use crate::operator;
 use std::collections::BinaryHeap;
 use ordered_float::NotNan;
-use std::cmp::Reverse;
+use std::cmp::{Ordering, Reverse};
 
 // TODO(msmetko) implement Reverse
 
@@ -36,13 +36,18 @@ impl operator::Operator for Median {
 
     fn result(&self) -> f64 {
         // returning the median
-        if self.high_heap.len() == self.low_heap.len() {
-            return (self.high_heap.peek().expect("").0.into_inner() + self.low_heap.peek().expect("").into_inner()) / 2.0;
-        } else if self.high_heap.len() > self.low_heap.len() {
-            return self.high_heap.peek().expect("").0.into_inner();
-        } else {
-            return self.low_heap.peek().expect("").into_inner();
+        match self.high_heap.len().cmp(&self.low_heap.len()) {
+            Ordering::Greater => (self.high_heap.peek().expect("").0.into_inner() + self.low_heap.peek().expect("").into_inner()) / 2.0,
+            Ordering::Less => self.high_heap.peek().expect("").0.into_inner(),
+            Ordering::Equal => self.low_heap.peek().expect("").into_inner()
         }
+        // if self.high_heap.len() == self.low_heap.len() {
+        //     return
+        // } else if self.high_heap.len() > self.low_heap.len() {
+        //     return
+        // } else {
+        //     return
+        // }
     }
 }
 
@@ -54,7 +59,7 @@ impl Median {
         let mut high_heap = BinaryHeap::new();
         high_heap.push(Reverse(NotNan::new(f64::INFINITY).expect("")));
         Median {
-            low_heap: low_heap,
+            low_heap,
             high_heap
         }
     }

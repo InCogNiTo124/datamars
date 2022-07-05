@@ -1,5 +1,5 @@
 use clap::{Arg, Command};
-use operator::operator::Operator;
+use operator::Operator;
 use std::io::BufRead;
 
 mod operator;
@@ -30,7 +30,7 @@ impl Processor {
             index,
         }
     }
-    pub(crate) fn process(&mut self, parts: &Vec<&str>) {
+    pub(crate) fn process(&mut self, parts: &[&str]) {
         self.op
             .apply(parts[self.index].parse().expect("no number provided"));
     }

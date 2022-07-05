@@ -1,4 +1,4 @@
-pub use crate::operator::operator;
+use crate::operator;
 
 pub struct Mean {
     n: i64,

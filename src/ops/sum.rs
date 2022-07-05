@@ -1,4 +1,4 @@
-pub use crate::operator::operator;
+use crate::operator;
 
 pub struct Sum {
     result: f64,

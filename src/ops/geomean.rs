@@ -1,4 +1,4 @@
-pub use crate::operator::operator;
+use crate::operator;
 use crate::ops::mean::Mean;
 
 pub struct GeoMean {
