@@ -18,7 +18,7 @@ struct Processor {
 
 impl Processor {
     fn new(op_type: &str, index: usize) -> Self {
-        Processor {
+        Self {
             op: match op_type {
                 "mean" => Box::new(Mean::new()) as Box<dyn Operator>,
                 "sum" => Box::new(Sum::new()) as Box<dyn Operator>,
@@ -39,7 +39,8 @@ impl Processor {
         self.op.result()
     }
 }
-fn operator_definitions(operations: Vec<&str>) -> Vec<(&str, &str)> {
+fn operator_definitions<'a>(operations: &'a[&str]) -> Vec<(&'a str, &'a str)> {
+// fn operator_definitions<'a>(operations: &'a[&str]) -> &[(&str, &str)] {
     let mut op_definitions: Vec<(&str, &str)> = Vec::new();
     let mut i = 0;
     while i < operations.len() {
@@ -62,12 +63,12 @@ fn main() {
         .arg(Arg::new("commands").multiple_values(true));
     let matches = parser.get_matches();
     let delimiter = matches.value_of("delimiter").unwrap();
-    let operations: Vec<&str> = matches
+    let operations : Vec<&str>= matches
         .values_of("commands")
         .expect("No commands provided")
         .collect();
 
-    let op_definition = operator_definitions(operations);
+    let op_definition = operator_definitions(&operations);
     let mut processors: Vec<Processor> = Vec::new();
     for (op_type, arg) in op_definition {
         let index = arg.parse::<usize>().unwrap() - 1;
@@ -76,9 +77,9 @@ fn main() {
     // assert_eq!(vals[0], "mean");
     let locked_stdin = std::io::stdin();
     for line in locked_stdin.lock().lines() {
-        let _line = line.unwrap();
-        let parts: Vec<&str> = _line.split(delimiter).collect();
-        for processor in processors.iter_mut() {
+        let line = line.unwrap();
+        let parts: Vec<&str> = line.split(delimiter).collect();
+        for processor in &mut processors {
             processor.process(&parts);
         }
     }

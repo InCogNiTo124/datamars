@@ -17,7 +17,7 @@ impl operator::Operator for HarMean {
 }
 
 impl HarMean {
-    pub fn new() -> HarMean {
-        HarMean { mean: Mean::new() }
+    pub const fn new() -> Self {
+        Self { mean: Mean::new() }
     }
 }

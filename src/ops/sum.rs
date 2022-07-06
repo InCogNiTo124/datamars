@@ -14,7 +14,7 @@ impl operator::Operator for Sum {
     }
 }
 impl Sum {
-    pub fn new() -> Sum {
-        Sum { result: 0.0 }
+    pub const fn new() -> Self {
+        Self { result: 0.0 }
     }
 }

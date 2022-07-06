@@ -17,7 +17,7 @@ impl operator::Operator for Mean {
 }
 
 impl Mean {
-    pub fn new() -> Mean {
-        Mean { n: 0, result: 0.0 }
+    pub const fn new() -> Self {
+        Self { n: 0, result: 0.0 }
     }
 }

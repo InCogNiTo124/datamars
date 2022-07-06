@@ -52,13 +52,13 @@ impl operator::Operator for Median {
 }
 
 impl Median {
-    pub fn new() -> Median {
+    pub fn new() -> Self {
 
         let mut low_heap = BinaryHeap::new();
         low_heap.push(NotNan::new(f64::NEG_INFINITY).expect(""));
         let mut high_heap = BinaryHeap::new();
         high_heap.push(Reverse(NotNan::new(f64::INFINITY).expect("")));
-        Median {
+        Self {
             low_heap,
             high_heap
         }
