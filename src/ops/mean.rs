@@ -1,7 +1,7 @@
 use crate::operator;
 
 pub struct Mean {
-    n: i64,
+    pub(crate) n: i64,
     result: f64,
 }
 
