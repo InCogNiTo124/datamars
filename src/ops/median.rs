@@ -46,13 +46,6 @@ impl Operator for Median {
             Ordering::Less => self.high_heap.peek().expect("").0.into_inner(),
             Ordering::Equal => self.low_heap.peek().expect("").into_inner(),
         }
-        // if self.high_heap.len() == self.low_heap.len() {
-        //     return
-        // } else if self.high_heap.len() > self.low_heap.len() {
-        //     return
-        // } else {
-        //     return
-        // }
     }
 }
 
