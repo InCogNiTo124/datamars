@@ -1,16 +1,15 @@
 use clap::{Arg, Command};
-use operator::Operator;
+use ops::Operator;
 use std::io::BufRead;
 
-mod operator;
 mod ops;
 
-use ops::geomean::GeoMean;
-use ops::harmean::HarMean;
-use ops::mean::Mean;
-use ops::sum::Sum;
-use ops::median::Median;
-use ops::std::Std;
+use ops::GeoMean;
+use ops::HarMean;
+use ops::Mean;
+use ops::Median;
+use ops::Std;
+use ops::Sum;
 
 struct Processor {
     op: Box<dyn Operator>,
@@ -41,8 +40,8 @@ impl Processor {
         self.op.result()
     }
 }
-fn operator_definitions<'a>(operations: &'a[&str]) -> Vec<(&'a str, &'a str)> {
-// fn operator_definitions<'a>(operations: &'a[&str]) -> &[(&str, &str)] {
+fn operator_definitions<'a>(operations: &'a [&str]) -> Vec<(&'a str, &'a str)> {
+    // fn operator_definitions<'a>(operations: &'a[&str]) -> &[(&str, &str)] {
     let mut op_definitions: Vec<(&str, &str)> = Vec::new();
     let mut i = 0;
     while i < operations.len() {
@@ -65,7 +64,7 @@ fn main() {
         .arg(Arg::new("commands").multiple_values(true));
     let matches = parser.get_matches();
     let delimiter = matches.value_of("delimiter").unwrap();
-    let operations : Vec<&str>= matches
+    let operations: Vec<&str> = matches
         .values_of("commands")
         .expect("No commands provided")
         .collect();
@@ -85,5 +84,12 @@ fn main() {
             processor.process(&parts);
         }
     }
-    println!("{}", processors.iter().map(|p| p.result().to_string()).collect::<Vec<_>>().join("\t"));
+    println!(
+        "{}",
+        processors
+            .iter()
+            .map(|p| p.result().to_string())
+            .collect::<Vec<_>>()
+            .join("\t")
+    );
 }

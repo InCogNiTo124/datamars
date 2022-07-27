@@ -1,11 +1,11 @@
-use crate::operator;
-use crate::ops::mean::Mean;
+use crate::ops::Mean;
+use crate::ops::Operator;
 
 pub struct GeoMean {
     mean: Mean,
 }
 
-impl operator::Operator for GeoMean {
+impl Operator for GeoMean {
     fn apply(&mut self, x: f64) {
         // consider using log2, maybe it has better numerical properties?
         self.mean.apply(x.ln());

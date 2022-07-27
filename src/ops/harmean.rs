@@ -1,11 +1,10 @@
-use crate::operator;
-use crate::ops::mean::Mean;
+use crate::ops::{Mean, Operator};
 
 pub struct HarMean {
     mean: Mean,
 }
 
-impl operator::Operator for HarMean {
+impl Operator for HarMean {
     fn apply(&mut self, x: f64) {
         // consider using log2, maybe it has better numerical properties?
         self.mean.apply(x.recip());

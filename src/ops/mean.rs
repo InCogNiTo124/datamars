@@ -1,11 +1,11 @@
-use crate::operator;
+use crate::ops::Operator;
 
 pub struct Mean {
-    pub(crate) n: i64,
+    pub(in crate::ops) n: i64,
     result: f64,
 }
 
-impl operator::Operator for Mean {
+impl Operator for Mean {
     fn apply(&mut self, x: f64) {
         self.n += 1;
         self.result += (x - self.result) / (self.n as f64);

@@ -1,16 +1,16 @@
-use crate::{Mean, operator};
+use crate::{Mean, Operator};
 
 pub struct Std {
     mean: Mean,
     result: f64,
 }
 
-impl operator::Operator for Std {
+impl Operator for Std {
     fn apply(&mut self, x: f64) {
         let old_mean = self.mean.result();
         self.mean.apply(x);
         let new_mean = self.mean.result();
-        self.result += (x - old_mean)*(x - new_mean);
+        self.result += (x - old_mean) * (x - new_mean);
     }
 
     fn result(&self) -> f64 {
@@ -20,6 +20,9 @@ impl operator::Operator for Std {
 
 impl Std {
     pub const fn new() -> Self {
-        Self { mean: Mean::new(), result: 0.0 }
+        Self {
+            mean: Mean::new(),
+            result: 0.0,
+        }
     }
 }

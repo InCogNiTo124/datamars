@@ -1,10 +1,10 @@
-use crate::operator;
+use crate::ops::Operator;
 
 pub struct Sum {
     result: f64,
 }
 
-impl operator::Operator for Sum {
+impl Operator for Sum {
     fn apply(&mut self, x: f64) {
         self.result += x;
     }
