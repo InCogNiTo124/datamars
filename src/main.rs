@@ -8,6 +8,8 @@ use ops::GeoMean;
 use ops::HarMean;
 use ops::Mean;
 use ops::Median;
+use ops::Min;
+use ops::Max;
 use ops::Std;
 use ops::Sum;
 
@@ -21,6 +23,8 @@ impl Processor {
         Self {
             op: match op_type {
                 "mean" => Box::new(Mean::new()) as Box<dyn Operator>,
+                "min" => Box::new(Min::new()) as Box<dyn Operator>,
+                "max" => Box::new(Max::new()) as Box<dyn Operator>,
                 "sum" => Box::new(Sum::new()) as Box<dyn Operator>,
                 "geomean" => Box::new(GeoMean::new()) as Box<dyn Operator>,
                 "harmean" => Box::new(HarMean::new()) as Box<dyn Operator>,
