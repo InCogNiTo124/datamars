@@ -18,3 +18,30 @@ impl Sum {
         Self { result: 0.0 }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::{Sum, Operator};
+
+    #[test]
+    fn test1() {
+        let mut obj = Sum::new();
+        let test_cases = vec![
+            (1, 1.0),
+            (2, 3.0),
+            (3, 6.0),
+            (4, 10.0),
+            (5, 15.0),
+            (6, 21.0),
+            (7, 28.0),
+            (8, 36.0),
+            (9, 45.0),
+            (100, 145.0),
+        ];
+        for (x, y) in test_cases {
+            obj.apply(x as f64);
+            let error = (obj.result() - y).abs();
+            assert!(error < 1e-15);
+        }
+    }
+}

@@ -3,8 +3,6 @@ use ordered_float::NotNan;
 use std::cmp::{Ordering, Reverse};
 use std::collections::BinaryHeap;
 
-// TODO(msmetko) implement Reverse
-
 // implements the algorithm as defined in
 // https://web.archive.org/web/20220627211752/http://www.dsalgo.com/2013/02/RunningMedian.php.html
 pub struct Median {
@@ -33,19 +31,26 @@ impl Operator for Median {
             self.high_heap
                 .push(Reverse(NotNan::new(new_val).expect("")));
         }
+        assert!(self.high_heap.len().abs_diff(self.low_heap.len()) <= 1);
     }
 
     fn result(&self) -> f64 {
         // returning the median
+        let high = self.high_heap.peek().expect("").0.into_inner();
+        let low = self.low_heap.peek().expect("").into_inner();
+        if self.high_heap.len() == 1 && self.low_heap.len() == 1 {
+            return f64::NAN
+        } else if self.high_heap.len() == 2 && self.low_heap.len() == 1 {
+            return high
+        } else if self.low_heap.len() == 2 && self.high_heap.len() == 1 {
+            return low
+        } else {
         match self.high_heap.len().cmp(&self.low_heap.len()) {
-            Ordering::Greater => {
-                (self.high_heap.peek().expect("").0.into_inner()
-                    + self.low_heap.peek().expect("").into_inner())
-                    / 2.0
-            }
-            Ordering::Less => self.high_heap.peek().expect("").0.into_inner(),
-            Ordering::Equal => self.low_heap.peek().expect("").into_inner(),
+            Ordering::Greater => high,
+            Ordering::Less => low,
+            Ordering::Equal => (high + low) / 2.0,
         }
+            }
     }
 }
 
@@ -58,6 +63,33 @@ impl Median {
         Self {
             low_heap,
             high_heap,
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{Median, Operator};
+
+    #[test]
+    fn test1() {
+        let mut obj = Median::new();
+        let test_cases = vec![
+            (1, 1.0),
+            (2, 1.5),
+            (3, 2.0),
+            (4, 2.5),
+            (5, 3.0),
+            (6, 3.5),
+            (7, 4.0),
+            (8, 4.5),
+            (9, 5.0),
+            (100, 5.5),
+        ];
+        for (x, y) in test_cases {
+            obj.apply(x as f64);
+            let error = (obj.result() - y).abs();
+            assert!(error < 1e-15);
         }
     }
 }
