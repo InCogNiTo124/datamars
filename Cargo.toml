@@ -4,7 +4,7 @@
 name = "datamars"
 version = "0.3.0"
 edition = "2021"
-description = "parking package for a rust copy of https://www.gnu.org/software/datamash/"
+description = "A Rust rewrite of https://www.gnu.org/software/datamash/"
 license = "Apache-2.0"
 repository = "https://github.com/InCogNiTo124/datamars.git"
 keywords = ["cli", "data", "csv"]
