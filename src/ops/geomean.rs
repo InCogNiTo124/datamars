@@ -8,11 +8,11 @@ pub struct GeoMean {
 impl Operator for GeoMean {
     fn apply(&mut self, x: f64) {
         // consider using log2, maybe it has better numerical properties?
-        self.mean.apply(x.ln());
+        self.mean.apply(x.log2());
     }
 
     fn result(&self) -> f64 {
-        self.mean.result().exp()
+        self.mean.result().exp2()
     }
 }
 
