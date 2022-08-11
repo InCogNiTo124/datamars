@@ -43,7 +43,8 @@ mod tests {
         ];
         for (x, y) in test_cases {
             obj.apply(x as f64);
-            assert!((obj.result() - y).abs() < 1e-7);
+            let error = (obj.result() - y).abs();
+            assert!(error < 1e-15);
         }
     }
 }
