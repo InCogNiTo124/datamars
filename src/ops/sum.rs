@@ -21,7 +21,7 @@ impl Sum {
 
 #[cfg(test)]
 mod tests {
-    use crate::{Sum, Operator};
+    use crate::{Operator, Sum};
 
     #[test]
     fn test1() {

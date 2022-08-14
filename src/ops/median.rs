@@ -39,18 +39,18 @@ impl Operator for Median {
         let high = self.high_heap.peek().expect("").0.into_inner();
         let low = self.low_heap.peek().expect("").into_inner();
         if self.high_heap.len() == 1 && self.low_heap.len() == 1 {
-            return f64::NAN
+            return f64::NAN;
         } else if self.high_heap.len() == 2 && self.low_heap.len() == 1 {
-            return high
+            return high;
         } else if self.low_heap.len() == 2 && self.high_heap.len() == 1 {
-            return low
+            return low;
         } else {
-        match self.high_heap.len().cmp(&self.low_heap.len()) {
-            Ordering::Greater => high,
-            Ordering::Less => low,
-            Ordering::Equal => (high + low) / 2.0,
-        }
+            match self.high_heap.len().cmp(&self.low_heap.len()) {
+                Ordering::Greater => high,
+                Ordering::Less => low,
+                Ordering::Equal => (high + low) / 2.0,
             }
+        }
     }
 }
 

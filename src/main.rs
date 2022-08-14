@@ -6,10 +6,10 @@ mod ops;
 
 use ops::GeoMean;
 use ops::HarMean;
+use ops::Max;
 use ops::Mean;
 use ops::Median;
 use ops::Min;
-use ops::Max;
 use ops::Std;
 use ops::Sum;
 
