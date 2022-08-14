@@ -1,0 +1,40 @@
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+name: Run Tests
+
+jobs:
+  testing:
+    name: testing
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+
+      - name: Install toolchain
+        uses: dtolnay/rust-toolchain@f7003eed5ea1f2175ea1d670748f9c21af4f5d9e
+        with:
+          toolchain: stable
+          components: clippy,rustfmt
+
+      - name: Log active toolchain
+        run: rustup show
+        shell: bash
+
+      - name: cargo fmt
+        run: cargo fmt -v --all --check
+
+      - name: cargo clippy
+        run:  cargo clippy --all-targets --all-features --fix -- -W clippy::pedantic -A clippy::cast_precision_loss
+        shell: bash
+
+      - name: cargo check
+        run: cargo check --workspace -v
+        shell: bash
+
+      - name: cargo test
+        run: cargo test --release --workspace --no-fail-fast -v
