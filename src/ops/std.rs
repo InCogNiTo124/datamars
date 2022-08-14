@@ -47,7 +47,7 @@ mod tests {
             (100, 818.25f64.sqrt()),
         ];
         for (x, y) in test_cases {
-            obj.apply(x as f64);
+            obj.apply(f64::from(x));
             let error = (obj.result() - y).abs();
             assert!(error < 1e-15);
         }
