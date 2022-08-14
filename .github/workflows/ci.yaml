@@ -29,7 +29,7 @@ jobs:
         run: cargo fmt -v --all --check
 
       - name: cargo clippy
-        run:  cargo clippy --all-targets --all-features --fix -- -W clippy::pedantic -A clippy::cast_precision_loss
+        run:  cargo clippy --all-targets --all-features -- -W clippy::pedantic -A clippy::cast_precision_loss
         shell: bash
 
       - name: cargo check
