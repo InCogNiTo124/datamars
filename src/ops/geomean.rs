@@ -38,11 +38,11 @@ mod tests {
             (6, 720f64.powf(1.0f64 / 6.0f64)),
             (7, 5040f64.powf(1.0f64 / 7.0f64)),
             (8, 40320f64.powf(1.0f64 / 8.0f64)),
-            (9, 362880f64.powf(1.0f64 / 9.0f64)),
-            (100, 36288000f64.powf(1.0f64 / 10.0f64)),
+            (9, 362_880_f64.powf(1.0f64 / 9.0f64)),
+            (100, 36_288_000_f64.powf(1.0f64 / 10.0f64)),
         ];
         for (x, y) in test_cases {
-            obj.apply(x as f64);
+            obj.apply(f64::from(x));
             let error = (obj.result() - y).abs();
             assert!(error < 1e-15);
         }

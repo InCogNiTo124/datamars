@@ -39,11 +39,11 @@ impl Operator for Median {
         let high = self.high_heap.peek().expect("").0.into_inner();
         let low = self.low_heap.peek().expect("").into_inner();
         if self.high_heap.len() == 1 && self.low_heap.len() == 1 {
-            return f64::NAN;
+            f64::NAN
         } else if self.high_heap.len() == 2 && self.low_heap.len() == 1 {
-            return high;
+            high
         } else if self.low_heap.len() == 2 && self.high_heap.len() == 1 {
-            return low;
+            low
         } else {
             match self.high_heap.len().cmp(&self.low_heap.len()) {
                 Ordering::Greater => high,
@@ -87,7 +87,7 @@ mod tests {
             (100, 5.5),
         ];
         for (x, y) in test_cases {
-            obj.apply(x as f64);
+            obj.apply(f64::from(x));
             let error = (obj.result() - y).abs();
             assert!(error < 1e-15);
         }
