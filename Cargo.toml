@@ -2,7 +2,7 @@
 
 [package]
 name = "datamars"
-version = "0.3.0"
+version = "0.4.0"
 edition = "2021"
 description = "A Rust rewrite of https://www.gnu.org/software/datamash/"
 license = "Apache-2.0"
