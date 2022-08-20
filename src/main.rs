@@ -1,4 +1,4 @@
-use clap::{Arg, Command};
+use clap::{Arg, ArgAction, Command};
 use ops::Operator;
 use std::io::BufRead;
 
@@ -44,12 +44,13 @@ impl Processor {
         self.op.result()
     }
 }
-fn operator_definitions<'a>(operations: &'a [&str]) -> Vec<(&'a str, &'a str)> {
+fn operator_definitions<'a>(operations: &'a [&str]) -> Vec<(&'a str, usize)> {
     // fn operator_definitions<'a>(operations: &'a[&str]) -> &[(&str, &str)] {
-    let mut op_definitions: Vec<(&str, &str)> = Vec::new();
+    let mut op_definitions: Vec<(&str, usize)> = Vec::new();
     let mut i = 0;
     while i < operations.len() {
-        op_definitions.push((operations[i], operations[i + 1]));
+        let x = operations[i + 1].parse::<usize>().unwrap() - 1;
+        op_definitions.push((operations[i], x));
         i += 2;
     }
     op_definitions
@@ -65,8 +66,25 @@ fn main() {
                 .long("delimiter")
                 .default_value(","),
         )
+        .arg(
+            Arg::new("headers-in")
+                .long("headers-in")
+                .action(ArgAction::SetTrue)
+                .takes_value(false)
+                .default_value_if("headers", Some("true"), Some("true")),
+        )
+        .arg(
+            Arg::new("headers-out")
+                .long("headers-out")
+                .action(ArgAction::SetTrue)
+                .takes_value(false)
+                .default_value_if("headers", Some("true"), Some("true")),
+        )
+        .arg(Arg::new("headers").short('H').action(ArgAction::SetTrue))
         .arg(Arg::new("commands").multiple_values(true));
     let matches = parser.get_matches();
+    // println!("{:?}", matches.get_one::<bool>("headers-in"));
+    // println!("{:?}", matches.get_one::<bool>("headers-out"));
     let delimiter = matches.value_of("delimiter").unwrap();
     let operations: Vec<&str> = matches
         .values_of("commands")
@@ -75,25 +93,54 @@ fn main() {
 
     let op_definition = operator_definitions(&operations);
     let mut processors: Vec<Processor> = Vec::new();
-    for (op_type, arg) in op_definition {
-        let index = arg.parse::<usize>().unwrap() - 1;
-        processors.push(Processor::new(op_type, index));
+    for (op_type, arg) in op_definition.as_slice() {
+        processors.push(Processor::new(*op_type, *arg));
     }
     // assert_eq!(vals[0], "mean");
-    let locked_stdin = std::io::stdin();
-    for line in locked_stdin.lock().lines() {
+    let mut locked_stdin_lines = std::io::stdin().lock().lines();
+    let mut headers: Vec<String> = vec![];
+    if *matches.get_one::<bool>("headers-in").unwrap_or(&false) {
+        let x = locked_stdin_lines.next().unwrap().unwrap();
+        let y = x.split(delimiter);
+        let mut header_vec: Vec<String> = y.map(String::from).collect();
+        headers.append(&mut header_vec);
+    }
+    for line in locked_stdin_lines {
         let line = line.unwrap();
         let parts: Vec<&str> = line.split(delimiter).collect();
         for processor in &mut processors {
             processor.process(&parts);
         }
     }
+
+    if *matches.get_one::<bool>("headers-out").unwrap_or(&false) {
+        if *matches.get_one::<bool>("headers-in").unwrap_or(&false) {
+            println!(
+                "{}",
+                op_definition
+                    .iter()
+                    .map(|t| format!("{}({})", t.0, headers[t.1]))
+                    .collect::<Vec<_>>()
+                    .join(",")
+            );
+        } else {
+            println!(
+                "{}",
+                op_definition
+                    .iter()
+                    .map(|t| format!("{}({})", t.0, t.1 + 1))
+                    .collect::<Vec<_>>()
+                    .join(",")
+            );
+        }
+    }
+
     println!(
         "{}",
         processors
             .iter()
             .map(|p| p.result().to_string())
             .collect::<Vec<_>>()
-            .join("\t")
+            .join(",")
     );
 }
