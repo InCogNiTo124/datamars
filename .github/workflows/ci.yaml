@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install toolchain
-        uses: dtolnay/rust-toolchain@f7003eed5ea1f2175ea1d670748f9c21af4f5d9e
+        uses: dtolnay/rust-toolchain@4d318db07a155f99337e7fc8de813caea5e92c32
         with:
           toolchain: stable
           components: clippy,rustfmt
