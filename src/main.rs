@@ -1,6 +1,8 @@
+extern crate core;
+
 use clap::{Arg, ArgAction, Command};
+use csv;
 use ops::Operator;
-use std::io::BufRead;
 
 mod ops;
 
@@ -35,7 +37,7 @@ impl Processor {
             index,
         }
     }
-    pub(crate) fn process(&mut self, parts: &[&str]) {
+    pub(crate) fn process(&mut self, parts: &[String]) {
         self.op
             .apply(parts[self.index].parse().expect("no number provided"));
     }
@@ -83,9 +85,10 @@ fn main() {
         .arg(Arg::new("headers").short('H').action(ArgAction::SetTrue))
         .arg(Arg::new("commands").multiple_values(true));
     let matches = parser.get_matches();
-    // println!("{:?}", matches.get_one::<bool>("headers-in"));
-    // println!("{:?}", matches.get_one::<bool>("headers-out"));
     let delimiter = matches.value_of("delimiter").unwrap();
+    assert_eq!(delimiter.len(), 1);
+    let headers_in = *matches.get_one::<bool>("headers-in").unwrap_or(&false);
+    let headers_out = *matches.get_one::<bool>("headers-out").unwrap_or(&false);
     let operations: Vec<&str> = matches
         .values_of("commands")
         .expect("No commands provided")
@@ -96,30 +99,28 @@ fn main() {
     for (op_type, arg) in op_definition.as_slice() {
         processors.push(Processor::new(*op_type, *arg));
     }
-    // assert_eq!(vals[0], "mean");
-    let mut locked_stdin_lines = std::io::stdin().lock().lines();
-    let mut headers: Vec<String> = vec![];
-    if *matches.get_one::<bool>("headers-in").unwrap_or(&false) {
-        let x = locked_stdin_lines.next().unwrap().unwrap();
-        let y = x.split(delimiter);
-        let mut header_vec: Vec<String> = y.map(String::from).collect();
-        headers.append(&mut header_vec);
-    }
-    for line in locked_stdin_lines {
-        let line = line.unwrap();
-        let parts: Vec<&str> = line.split(delimiter).collect();
+
+    let mut csv_reader = csv::ReaderBuilder::new()
+        .delimiter(delimiter.as_bytes()[0])
+        .has_headers(headers_in)
+        .from_reader(std::io::stdin());
+
+    for result in csv_reader.records() {
+        let record = result.unwrap();
+        let parts = record.iter().map(String::from).collect::<Vec<String>>();
         for processor in &mut processors {
             processor.process(&parts);
         }
     }
 
-    if *matches.get_one::<bool>("headers-out").unwrap_or(&false) {
-        if *matches.get_one::<bool>("headers-in").unwrap_or(&false) {
+    let headers = csv_reader.headers().unwrap();
+    if headers_out {
+        if headers_in {
             println!(
                 "{}",
                 op_definition
                     .iter()
-                    .map(|t| format!("{}({})", t.0, headers[t.1]))
+                    .map(|t| format!("{}({})", t.0, headers.get(t.1).unwrap()))
                     .collect::<Vec<_>>()
                     .join(",")
             );
