@@ -18,6 +18,6 @@ name = "ms"
 path = "src/main.rs"
 
 [dependencies]
-clap = { version = "3.2.19", features = ["derive"]}
+clap = { version = "3.2.20", features = ["derive"]}
 ordered-float = "^3.0.0"
 csv = "^1.1"
