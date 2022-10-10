@@ -1,7 +1,6 @@
 extern crate core;
 
 use clap::{Arg, ArgAction, Command};
-use csv;
 use ops::Operator;
 
 mod ops;
@@ -46,13 +45,14 @@ impl Processor {
         self.op.result()
     }
 }
-fn operator_definitions<'a>(operations: &'a [&str]) -> Vec<(&'a str, usize)> {
+
+fn operator_definitions(operations: &Vec<String>) -> Vec<(String, usize)> {
     // fn operator_definitions<'a>(operations: &'a[&str]) -> &[(&str, &str)] {
-    let mut op_definitions: Vec<(&str, usize)> = Vec::new();
+    let mut op_definitions: Vec<(String, usize)> = Vec::new();
     let mut i = 0;
     while i < operations.len() {
         let x = operations[i + 1].parse::<usize>().unwrap() - 1;
-        op_definitions.push((operations[i], x));
+        op_definitions.push((operations[i].clone(), x));
         i += 2;
     }
     op_definitions
@@ -72,32 +72,30 @@ fn main() {
             Arg::new("headers-in")
                 .long("headers-in")
                 .action(ArgAction::SetTrue)
-                .takes_value(false)
-                .default_value_if("headers", Some("true"), Some("true")),
+                .default_value_if("headers", "true", "false"),
         )
         .arg(
             Arg::new("headers-out")
                 .long("headers-out")
                 .action(ArgAction::SetTrue)
-                .takes_value(false)
-                .default_value_if("headers", Some("true"), Some("true")),
+                .default_value_if("headers", "true", "false"),
         )
         .arg(Arg::new("headers").short('H').action(ArgAction::SetTrue))
-        .arg(Arg::new("commands").multiple_values(true));
+        .arg(Arg::new("commands").num_args(2..));
     let matches = parser.get_matches();
-    let delimiter = matches.value_of("delimiter").unwrap();
+    let delimiter: String = matches.get_one::<&str>("delimiter").unwrap().to_string();
     assert_eq!(delimiter.len(), 1);
     let headers_in = *matches.get_one::<bool>("headers-in").unwrap_or(&false);
     let headers_out = *matches.get_one::<bool>("headers-out").unwrap_or(&false);
-    let operations: Vec<&str> = matches
-        .values_of("commands")
+    let operations: Vec<String> = matches
+        .get_many::<&str>("commands")
         .expect("No commands provided")
+        .map(|t| (*t).to_string())
         .collect();
-
     let op_definition = operator_definitions(&operations);
     let mut processors: Vec<Processor> = Vec::new();
     for (op_type, arg) in op_definition.as_slice() {
-        processors.push(Processor::new(*op_type, *arg));
+        processors.push(Processor::new(op_type, *arg));
     }
 
     let mut csv_reader = csv::ReaderBuilder::new()
