@@ -1,7 +1,6 @@
 extern crate core;
 
 use clap::{Arg, ArgAction, Command};
-use csv;
 use ops::Operator;
 
 mod ops;
@@ -92,12 +91,11 @@ fn main() {
         .get_many::<&str>("commands")
         .expect("No commands provided")
         .map(|t| (*t).to_string())
-        .collect()
-        ;
+        .collect();
     let op_definition = operator_definitions(&operations);
     let mut processors: Vec<Processor> = Vec::new();
     for (op_type, arg) in op_definition.as_slice() {
-        processors.push(Processor::new(&*op_type, *arg));
+        processors.push(Processor::new(op_type, *arg));
     }
 
     let mut csv_reader = csv::ReaderBuilder::new()
