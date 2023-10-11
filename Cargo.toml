@@ -19,5 +19,5 @@ path = "src/main.rs"
 
 [dependencies]
 clap = { version = "4.3.8", features = ["derive"]}
-ordered-float = "^3.7.0"
+ordered-float = "^4.1.1"
 csv = "^1.2.2"
